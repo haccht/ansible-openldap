@@ -15,7 +15,7 @@
     group: openldap
 
 - name: Generate a Self Signed OpenSSL certificate
-  openssl_certificate:
+  community.crypto.x509_certificate:
     path: '{{ ldap_tls_dir }}/ldaps.crt'
     privatekey_path: '{{ ldap_tls_dir }}/ldaps.key'
     csr_path: '{{ ldap_tls_dir }}/ldaps.csr'
@@ -24,7 +24,7 @@
     group: openldap
 
 - name: Configure OpenLDAP server TLS/SSL
-  ldap_attrs:
+  community.general.ldap_attrs:
     dn: 'cn=config'
     attributes:
       olcTLSCACertificateFile: '{{ ldap_tls_cacert }}'

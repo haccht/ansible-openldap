@@ -1,6 +1,6 @@
 ---
 - name: Install LDAP dependencies
-  apt:
+  ansible.builtin.apt:
     name: '{{ ldap_packages }}'
     state: present
 
@@ -12,7 +12,7 @@
     line: 'SLAPD_SERVICES="ldap:/// ldapi:/// ldaps:///"'
 
 - name: Start slapd
-  systemd:
+  ansible.builtin.systemd:
     name: slapd
     state: started
     enabled: true

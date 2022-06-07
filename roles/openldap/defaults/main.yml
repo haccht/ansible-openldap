@@ -27,6 +27,8 @@ ldap_start_tls: false
 ldap_search_base: 'dc={{ ldap_organization }},{{ ldap_base_dc }}'
 #ldap_user_search_filter: "(&(objectClass=user)(objectClass=person)(uid=*))"
 #ldap_group_search_filter: "(&(objectClass=group)(gidNumber=*))"
+ldap_user_search_filter:
+ldap_group_search_filter:
 ldap_user_search_base:
 ldap_group_search_base:
 ldap_access_filter_groups: []
