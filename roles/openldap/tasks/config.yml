@@ -117,12 +117,11 @@
       olcRootDN: '{{ ldap_dn_bind }}'
       olcRootPW: '{{ ldap_dn_bind_pass }}'
 
-- name: Check if OpenSSl publicKey schema is loaded
+- name: Check if OpenSSL publicKey schema is loaded
   ansible.builtin.command:
     cmd: 'ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// -b cn=schema,cn=config -s one "(cn={*}openssh-lpk)" dn'
   changed_when: false
   register: schema_loaded
-
 
 - name: Create OpenSSL publicKey schema
   community.general.ldap_entry:
