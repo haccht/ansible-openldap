@@ -1,0 +1,52 @@
+[domain/LDAP]
+id_provider = ldap
+auth_provider = ldap
+chpass_provider = ldap
+autofs_provider = ldap
+
+ldap_schema = {{ ldap_schema }}
+ldap_uri = {{ ldap_uris | join(',') }}
+
+ldap_tls_cacertdir = {{ ldap_tls_dir }}
+ldap_tls_cacert = {{ ldap_tls_cacert }}
+{% if ldap_tls_reqcert %}
+ldap_tls_reqcert = {{ ldap_tls_reqcert }}
+{% endif %}
+ldap_id_use_start_tls = {{ ldap_start_tls }}
+
+ldap_search_base = {{ ldap_search_base }}
+ldap_default_bind_dn = {{ ldap_dn_bind }}
+ldap_default_authtok_type = password
+ldap_default_authtok = {{ ldap_dn_bind_pass }}
+cache_credentials = True
+ldap_referrals = False
+
+{% if ldap_group_search_filter %}
+ldap_group_search_filter = {{ ldap_group_search_filter }}
+{% endif %}
+{% if ldap_user_search_filter %}
+ldap_user_search_filter = {{ ldap_user_search_filter }}
+{% endif %}
+{% if ldap_group_search_base %}
+ldap_group_search_base = {{ ldap_group_search_base }}
+{% endif %}
+{% if ldap_user_search_base %}
+ldap_user_search_base = {{ ldap_user_search_base }}
+{% endif %}
+ldap_access_filter = (&(!(userAccountControl:1.2.840.113556.1.4.803:=2))(|{{ ldap_access_filter_groups | map('regex_replace', '^(?P<ldap_group>.*)$', '(memberOf=\\g<ldap_group>)') | join('') }}{{ ldap_access_filter_users | map('regex_replace', '^(?P<ldap_user>.*)$', '(sAMAccountName=\\g<ldap_user>)') | join('') }}))
+
+[sssd]
+config_file_version = 2
+services = nss, pam, autofs
+domains = LDAP
+
+[nss]
+homedir_substring = /home
+
+[pam]
+
+[sudo]
+
+[autofs]
+
+[ssh]

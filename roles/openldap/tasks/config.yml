@@ -1,0 +1,128 @@
+---
+- name: Configure ldap.conf
+  template:
+    src: ldap.conf
+    dest: /etc/ldap/ldap.conf
+
+- name: Configure base DN
+  community.general.ldap_attrs:
+    state: exact
+    dn: olcDatabase={1}mdb,cn=config
+    attributes:
+      olcSuffix: '{{ ldap_base_dc }}'
+
+- name: Configure LDAP modules
+  community.general.ldap_entry:
+    state: present
+    dn: cn=module{1},cn=config
+    objectClass: olcModuleList
+    attributes:
+      olcModulePath: /usr/lib/ldap
+      olcModuleLoad:
+        - memberof
+        - refint
+
+- name: Configure LDAP memberof overlay
+  community.general.ldap_entry:
+    state: present
+    dn: olcOverlay={0}memberof,olcDatabase={1}mdb,cn=config
+    objectClass:
+      - olcConfig
+      - olcMemberOf
+      - olcOverlayConfig
+      - top
+    attributes:
+      olcOverlay: memberof
+      olcMemberOfDangling: ignore
+      olcMemberOfRefInt: 'TRUE'
+      olcMemberOfGroupOC: groupOfNames
+      olcMemberOfMemberAD: member
+      olcMemberOfMemberOfAD: memberOf
+
+- name: Configure LDAP refint overlay
+  community.general.ldap_entry:
+    state: present
+    dn: olcOverlay={1}refint,olcDatabase={1}mdb,cn=config
+    objectClass:
+      - olcConfig
+      - olcRefintConfig
+      - olcOverlayConfig
+      - top
+    attributes:
+      olcOverlay: 'refint'
+      olcRefintAttribute: memberof member manager owner
+
+- name: Configure permissions
+  notify: restart slapd
+  community.general.ldap_attrs:
+    state: exact
+    dn: olcDatabase={1}mdb,cn=config
+    attributes:
+      olcAccess:
+        - >-
+          {0}to dn.subtree="{{ ldap_base_dc }}"
+          by dn.exact="{{ ldap_dn_external }}" manage
+          by dn.exact="{{ ldap_dn_bind }}" manage
+          by dn.children="{{ ldap_dn_admin_group }}" manage
+          by dn.children="{{ ldap_dn_services_group }}" write
+          by self write
+          by anonymous auth
+          by * none
+        - >-
+          {1}to attrs=userPassword
+          by self write
+          by anonymous auth
+          by * none
+
+- name: Create root object "{{ ldap_base_dc }}"
+  community.general.ldap_entry:
+    state: present
+    dn: '{{ ldap_base_dc }}'
+    objectClass:
+      - dcObject
+      - organization
+      - top
+    attributes:
+      o: ldap
+
+- name: Create basic organizational units
+  community.general.ldap_entry:
+    state: present
+    dn: '{{ item.dn }}'
+    attributes:
+      ou: '{{ item.ou }}'
+    objectClass:
+      - organizationalUnit
+  with_items:
+    - dn: 'ou=services,{{ ldap_base_dc }}'
+      ou: services
+    - dn: 'ou=admin,{{ ldap_base_dc }}'
+      ou: admin
+
+- name: Create super admin group
+  community.general.ldap_entry:
+    state: present
+    dn: '{{ ldap_dn_admin_group }}'
+    objectClass:
+      - organizationalUnit
+      - top
+    attributes:
+      ou: '{{ ldap_admin_group }}'
+
+- name: Configure admin user
+  community.general.ldap_attrs:
+    state: exact
+    dn: olcDatabase={1}mdb,cn=config
+    attributes:
+      olcRootDN: '{{ ldap_dn_bind }}'
+      olcRootPW: '{{ ldap_dn_bind_pass }}'
+
+- name: Load OpenSSL publicKey schema
+  community.general.ldap_entry:
+    state: present
+    dn: cn=openssh-lpk,cn=schema,cn=config
+    objectClass:
+      - olcSchemaConfig
+    attributes:
+      olcAttributeTypes: '( 1.3.6.1.4.1.24552.500.1.1.1.13 NAME 'sshPublicKey' DESC 'MANDATORY: OpenSSH Public key' EQUALITY octetStringMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.40 )'
+      olcObjectClasses: '( 1.3.6.1.4.1.24552.500.1.1.2.0 NAME 'ldapPublicKey' SUP top AUXILIARY DESC 'MANDATORY: OpenSSH LPK objectclass' MAY ( sshPublicKey $ uid ) )'
