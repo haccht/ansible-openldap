@@ -9,7 +9,7 @@ ldap_packages:
 
 ldap_organization: 'example.com'
 ldap_uris: ['ldaps://localhost:636']
-ldap_schema: 'rfc2307bis'
+ldap_schema: 'rfc2307'
 ldap_base_dc: 'dc=ldap'
 ldap_admin_group: 'admin'
 ldap_services_group: 'services'
