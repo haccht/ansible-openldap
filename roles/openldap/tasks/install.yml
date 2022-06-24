@@ -4,24 +4,24 @@
     name: '{{ ldap_packages }}'
     state: present
 
+- name: Enable ldaps:/// as slapd service
+  ansible.builtin.lineinfile:
+    path: /etc/default/slapd
+    state: present
+    regexp: 'SLAPD_SERVICES="ldap:/// ldapi:///"'
+    line: 'SLAPD_SERVICES="ldap:/// ldapi:/// ldaps:///"'
+
 - name: Add rfc2307bis schema
   ansible.builtin.lineinfile:
     path: /usr/share/slapd/slapd.init.ldif
     state: present
     backup: yes
-    regexp: 'nis.ldif'
-    line: 'gosa/rfc2307bis.ldif'
+    regexp: 'include: file:///etc/ldap/schema/nis.ldif'
+    line: 'include: file:///etc/ldap/schema/gosa/rfc2307bis.ldif'
 
 - name: Apply slapd config
-  command: dpkg-reconfigure -f noninteractive slapd
-
-- name: Enable ldaps:/// as slapd service
-  ansible.builtin.lineinfile:
-    path: /etc/default/slapd
-    state: present
-    validate: /usr/sbin/slapd -T test
-    regexp: 'SLAPD_SERVICES="ldap:/// ldapi:///"'
-    line: 'SLAPD_SERVICES="ldap:/// ldapi:/// ldaps:///"'
+  ansible.builtin.command:
+    cmd: dpkg-reconfigure -f noninteractive slapd
 
 - name: Start slapd
   ansible.builtin.systemd:
