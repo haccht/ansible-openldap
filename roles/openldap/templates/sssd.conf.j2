@@ -20,6 +20,7 @@ ldap_default_authtok_type = password
 ldap_default_authtok = {{ ldap_dn_bind_pass }}
 cache_credentials = True
 ldap_referrals = False
+enumerate = True
 
 {% if ldap_group_search_filter %}
 ldap_group_search_filter = {{ ldap_group_search_filter }}

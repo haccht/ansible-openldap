@@ -1,6 +1,7 @@
 ---
 - include_tasks: install.yml
 - include_tasks: config.yml
+- include_tasks: administration.yml
 - include_tasks: organization.yml
 - include_tasks: certificate.yml
 - include_tasks: sssd.yml

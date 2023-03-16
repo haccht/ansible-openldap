@@ -17,8 +17,4 @@
       replace: 'PermitRootLogin no'
     - pattern: '^#PermitEmptyPasswords'
       replace: 'PermitEmptyPasswords no'
-    - pattern: '^#AuthorizedKeysCommandUser'
-      replace: 'AuthorizedKeysCommandUser root'
-    - pattern: '^#AuthorizedKeysCommand'
-      replace: 'AuthorizedKeysCommand /usr/bin/sss_ssh_authorizedkeys'
   notify: restart sshd
