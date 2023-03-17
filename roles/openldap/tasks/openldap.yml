@@ -1,10 +1,18 @@
 ---
+- name: openldap | configure TLS_REQCERT
+  ansible.builtin.lineinfile:
+    path: /etc/ldap/ldap.conf
+    state: present
+    regexp: '^TLS_REQCERT'
+    line: "TLS_REQCERT never"
+
 - name: openldap | start osixia/openldap
   community.docker.docker_container:
     name: 'openldap'
     image: 'osixia/openldap:1.5.0'
     command: '--copy-service'
     state: started
+    restart: true
     env:
       LDAP_ORGANISATION: '{{ ldap_organisation }}'
       LDAP_DOMAIN: '{{ ldap_domain }}'
@@ -21,6 +29,12 @@
       - '/var/lib/ldap'
       - '/etc/ldap/slapd.d'
       - '/container/service/slapd/assets/certs/'
+
+- name: openldap | wait for start
+  ansible.builtin.wait_for:
+    host: 'localhost'
+    port: '389'
+    timeout: 300
 
 - name: openldap | create organizational units
   community.general.ldap_entry:

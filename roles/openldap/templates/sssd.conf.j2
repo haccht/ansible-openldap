@@ -1,9 +1,9 @@
 [sssd]
 config_file_version = 2
-services = nss, pam, sudo
-domains = LDAP
+services = nss, pam, ssh, sudo
+domains = default
 
-[domain/LDAP]
+[domain/default]
 id_provider = ldap
 auth_provider = ldap
 chpass_provider = ldap

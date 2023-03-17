@@ -10,5 +10,4 @@
   ansible.builtin.copy:
     src: pam_mkhomedir
     dest: /usr/share/pam-configs/mkhomedir
-  notify:
-    - run pam auth update
+  notify: pam | auth update

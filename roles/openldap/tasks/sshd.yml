@@ -1,3 +1,4 @@
+---
 - name: sshd | service start
   ansible.builtin.systemd:
     name: sshd
@@ -17,4 +18,4 @@
       replace: 'PermitRootLogin no'
     - pattern: '^#PermitEmptyPasswords'
       replace: 'PermitEmptyPasswords no'
-  notify: restart sshd
+  notify: sshd | restart service
