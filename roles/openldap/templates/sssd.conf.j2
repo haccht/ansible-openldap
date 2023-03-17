@@ -22,6 +22,9 @@ ldap_default_authtok = {{ ldap_admin_password }}
 ldap_schema = rfc2307bis
 ldap_search_base = {{ ldap_base_dn }}
 
+ldap_group_member = uniqueMember
+ldap_group_object_class = groupOfUniqueNames
+
 [nss]
 homedir_substring = /home
 
