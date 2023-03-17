@@ -2,8 +2,5 @@
 - name: Setup OpenLDAP
   hosts: localhost
   become: yes
-  vars:
-    ldap_organization: "example.com"
-    ldap_sudo_groups: ["wheel"]
   roles:
     - openldap

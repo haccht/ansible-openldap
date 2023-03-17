@@ -1,10 +1,10 @@
-- name: Update sshd service enabled/started
+- name: sshd | service start
   ansible.builtin.systemd:
     name: sshd
     enabled: yes
     state: started
 
-- name: Modify sshd_config
+- name: sshd | configure sshd_config
   ansible.builtin.lineinfile:
     path: /etc/ssh/sshd_config
     state: present

@@ -1,8 +1,6 @@
 ---
-- include_tasks: install.yml
-- include_tasks: config.yml
-- include_tasks: administration.yml
-- include_tasks: organization.yml
-- include_tasks: certificate.yml
+- include_tasks: requirement.yml
+- include_tasks: openldap.yml
+- include_tasks: pam.yml
 - include_tasks: sssd.yml
 - include_tasks: sshd.yml

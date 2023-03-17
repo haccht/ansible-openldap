@@ -1,0 +1,30 @@
+---
+- name: certificates | create directories for OpenSSL certificate
+  file:
+    path: "{{ ldap_tls_certs }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: certificates | generate an OpenSSL private key
+  community.crypto.openssl_privatekey:
+    path: '{{ ldap_tls_key }}'
+
+- name: certificates | generate an OpenSSL Certificate Signing Request
+  community.crypto.openssl_csr:
+    path: '{{ ldap_tls_csr }}'
+    privatekey_path: '{{ ldap_tls_key }}'
+    common_name: '{{ ldap_domain }}'
+    country_name: JP
+
+- name: certificates | generate a Self Signed OpenSSL certificate
+  community.crypto.x509_certificate:
+    path: '{{ ldap_tls_ca_crt }}'
+    privatekey_path: '{{ ldap_tls_key }}'
+    csr_path: '{{ ldap_tls_csr }}'
+    provider: selfsigned
+
+- name: certificates | generate DH parameters
+  community.crypto.openssl_dhparam:
+    path: '{{ ldap_tls_dhparams }}'

@@ -1,32 +1,17 @@
 ---
-ldap_packages:
-  - slapd
+packages:
+  - sudo
+  - openssh-server
   - ldap-utils
   - sssd
   - sssd-ldap
-  - sudo
-  - openssh-server
+  - libnss-sss
 
-ldap_organization: 'example.com'
-ldap_uris: ['ldaps://localhost:636']
-ldap_schema: 'rfc2307bis'
-ldap_base_dc: 'dc=ldap'
-ldap_admin_group: 'admin'
-ldap_services_group: 'services'
-ldap_dn_external: 'gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth'
-ldap_dn_admin_group: 'ou={{ ldap_admin_group }},{{ ldap_base_dc }}'
-ldap_dn_services_group: 'ou={{ ldap_services_group }},{{ ldap_base_dc }}'
-ldap_dn_bind: 'cn=root,{{ ldap_dn_admin_group }}'
-ldap_dn_bind_pass: 'password'
-
-ldap_tls_dir: '/etc/ldap/sasl2'
-ldap_tls_cacert: '/etc/ssl/certs/ca-certificates.crt'
-ldap_tls_reqcert: allow
-ldap_start_tls: false
-
-ldap_search_base: 'dc={{ ldap_organization }},{{ ldap_base_dc }}'
-#ldap_user_search_filter: "(&(objectClass=user)(objectClass=person)(uid=*))"
-#ldap_group_search_filter: "(&(objectClass=group)(gidNumber=*))"
+ldap_organisation: "Example Org."
+ldap_domain:  "example.com"
+ldap_base_dn: "dc=example,dc=com"
+ldap_bind_dn: "cn=admin,{{ ldap_base_dn }}"
+ldap_admin_password: "admin"
 ldap_user_search_filter:
 ldap_group_search_filter:
 ldap_user_search_base:
@@ -34,6 +19,3 @@ ldap_group_search_base:
 ldap_access_filter_groups: []
 ldap_access_unix_groups: []
 ldap_access_filter_users: []
-
-ldap_sudo_users: []
-ldap_sudo_groups: []

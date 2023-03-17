@@ -1,23 +1,13 @@
 ---
-- name: start slapd
-  ansible.builtin.systemd:
-    name: slapd
-    state: started
-
-- name: restart slapd
-  ansible.builtin.systemd:
-    name: slapd
-    state: restarted
-
-- name: restart sssd
+- name: sssd | restart service
   ansible.builtin.systemd:
     name: sssd
     state: restarted
 
-- name: restart sshd
+- name: sshd | restart service
   ansible.builtin.systemd:
     name: sshd
     state: restarted
 
-- name: run pam auth update
+- name: pam | auth update
   ansible.builtin.shell: pam-auth-update --package

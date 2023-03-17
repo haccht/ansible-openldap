@@ -1,5 +1,5 @@
 ---
-- name: Copy SSSD configuration file
+- name: sssd | copy configuration
   ansible.builtin.template:
     src: sssd.conf.j2
     dest: /etc/sssd/sssd.conf
@@ -7,9 +7,9 @@
     backup: true
     owner: root
     group: root
-  notify: restart sssd
+  notify: sssd | restart service
 
-- name: Query SSSD in nsswitch.conf
+- name: sssd | configure nsswitch.conf
   ansible.builtin.replace:
     dest: /etc/nsswitch.conf
     regexp: '^({{ item }}(?!.*\bsss\b).*)$'
@@ -19,45 +19,10 @@
     - passwd
     - shadow
     - group
-    - services
     - netgroup
-    - automount
 
-- name: Don't query SSSD for sudoers in nsswitch.conf
-  ansible.builtin.replace:
-    dest: /etc/nsswitch.conf
-    regexp: '^(sudoers.*)(\bsss)(\b.*)$'
-    replace: '\1 \3'
-    backup: true
-
-- name: Ensure home directories are created upon login
-  ansible.builtin.lineinfile:
-    dest: /etc/pam.d/common-account
-    regexp: 'pam_mkhomedir\.so'
-    line: 'session required pam_mkhomedir.so skel=/etc/skel/ umask=0022'
-    state: present
-
-- name: Start and enable auth services
+- name: sssd | start service
   ansible.builtin.systemd:
     name: sssd
     state: started
     enabled: true
-
-- name: Add LDAP users to sudoers
-  ansible.builtin.template:
-    src: ldap_sudo_users.j2
-    dest: '/etc/sudoers.d/ldap_sudo_users'
-    validate: 'visudo -cf %s'
-
-- name: Add LDAP groups to sudoers
-  ansible.builtin.template:
-    src: ldap_sudo_groups.j2
-    dest: '/etc/sudoers.d/ldap_sudo_groups'
-    validate: 'visudo -cf %s'
-
-- name: Add pam_mkhomedir for Debian machines
-  ansible.builtin.copy:
-    src: pam_mkhomedir
-    dest: /usr/share/pam-configs/mkhomedir
-  notify:
-    - run pam auth update

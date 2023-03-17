@@ -1,0 +1,38 @@
+---
+- name: openldap | start osixia/openldap
+  community.docker.docker_container:
+    name: 'openldap'
+    image: 'osixia/openldap:1.5.0'
+    command: '--copy-service'
+    state: started
+    env:
+      LDAP_ORGANISATION: '{{ ldap_organisation }}'
+      LDAP_DOMAIN: '{{ ldap_domain }}'
+      LDAP_BASE_DN: '{{ ldap_base_dn }}'
+      LDAP_ADMIN_PASSWORD: '{{ ldap_admin_password }}'
+      LDAP_BACKEND: 'mdb'
+      LDAP_RFC2307BIS_SCHEMA: 'true'
+      LDAP_TLS_VERIFY_CLIENT: 'try'
+    tty: true
+    ports:
+      - '389:389'
+      - '636:636'
+    volumes:
+      - '/var/lib/ldap'
+      - '/etc/ldap/slapd.d'
+      - '/container/service/slapd/assets/certs/'
+
+- name: openldap | create organizational units
+  community.general.ldap_entry:
+    dn: 'ou={{ item }},{{ ldap_base_dn }}'
+    state: present
+    server_uri: 'ldap://localhost:389'
+    bind_dn: '{{ ldap_bind_dn }}'
+    bind_pw: '{{ ldap_admin_password }}'
+    attributes:
+      ou: '{{ item }}'
+    objectClass:
+      - 'organizationalUnit'
+  with_items:
+    - users
+    - groups

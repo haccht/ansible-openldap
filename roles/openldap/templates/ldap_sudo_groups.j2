@@ -1,3 +1,0 @@
-{% for group in ldap_sudo_groups %}
-%{{ group | replace(" ", "\ ") }} ALL=(ALL:ALL) ALL
-{% endfor %}
