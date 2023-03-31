@@ -1,0 +1,5 @@
+---
+- include_tasks: requirement.yml
+- include_tasks: pam.yml
+- include_tasks: sssd.yml
+- include_tasks: sshd.yml

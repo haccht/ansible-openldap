@@ -1,13 +1,4 @@
 ---
-- name: packages | install
-  ansible.builtin.apt:
-    name: "{{ packages }}"
-    install_recommends: false
-    update_cache: true
-    cache_valid_time: 3600
-    autoclean: true
-    autoremove: true
-
 - name: packages | add docker gpg key
   ansible.builtin.get_url:
     url: "https://download.docker.com/linux/ubuntu/gpg"

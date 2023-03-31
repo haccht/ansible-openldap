@@ -1,0 +1,30 @@
+---
+- name: sssd | start service
+  ansible.builtin.systemd:
+    name: sssd
+    state: started
+    enabled: true
+
+- name: sssd | copy configuration
+  ansible.builtin.template:
+    src: sssd.conf.j2
+    dest: /etc/sssd/sssd.conf
+    mode: 0600
+    backup: true
+    owner: root
+    group: root
+  notify: sssd | restart service
+
+- name: sssd | configure nsswitch.conf
+  ansible.builtin.replace:
+    dest: /etc/nsswitch.conf
+    regexp: '^({{ item }}(?!.*\bsss\b).*)$'
+    replace: '\1 sss'
+    backup: true
+  with_items:
+    - passwd
+    - shadow
+    - group
+    - netgroup
+    - services
+  notify: sssd | restart service

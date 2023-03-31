@@ -3,4 +3,7 @@
   hosts: localhost
   become: yes
   roles:
-    - openldap
+    - role: openldap
+      tags: openldap
+    - role: sssd_sshd
+      tags: sssd_sshd
