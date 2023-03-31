@@ -2,7 +2,6 @@
 packages:
   - sudo
   - openssh-server
-  - ldap-utils
   - sssd
   - sssd-ldap
   - libnss-sss

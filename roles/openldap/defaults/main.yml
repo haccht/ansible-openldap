@@ -1,4 +1,7 @@
 ---
+packages:
+  - ldap-utils
+
 ldap_organisation: "Example Org."
 ldap_domain:  "example.com"
 ldap_base_dn: "dc=example,dc=com"
