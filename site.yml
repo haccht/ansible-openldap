@@ -5,5 +5,5 @@
   roles:
     - role: openldap
       tags: openldap
-    - role: sssd_sshd
-      tags: sssd_sshd
+    - role: ldap_pam
+      tags: ldap_pam

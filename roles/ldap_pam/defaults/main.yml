@@ -1,11 +1,4 @@
 ---
-packages:
-  - sudo
-  - openssh-server
-  - sssd
-  - sssd-ldap
-  - libnss-sss
-
 ldap_base_dn: "dc=example,dc=com"
 ldap_bind_dn: "cn=admin,{{ ldap_base_dn }}"
 ldap_admin_password: "admin"

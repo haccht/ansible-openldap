@@ -1,0 +1,9 @@
+---
+packages:
+  - sudo
+  - openssh-server
+  - sssd
+  - sssd-ldap
+  - libnss-sss
+  - ldap-utils
+
